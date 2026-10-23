@@ -216,7 +216,7 @@ export default function App() {
         <div>
           <h1 className="text-xl font-bold tracking-tight text-purple-400 flex items-center gap-2">
             <Network className="h-6 w-6 text-purple-500" />
-            VibeCloud AZ-900 Core Builder
+            Smart Quiz Builder
           </h1>
           <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
             <ShieldAlert className="h-3 w-3 text-amber-500 inline" />
@@ -535,7 +535,7 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-slate-900 px-6 py-4">
         <p className="text-xs text-slate-500 text-center">
-          VibeCloud AZ-900 Core Builder — Educational practice tool. Not affiliated with Microsoft.
+          Smart Quiz Builder — Educational practice tool. Not affiliated with Microsoft.
         </p>
       </footer>
     </div>
