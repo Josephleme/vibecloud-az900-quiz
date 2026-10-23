@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Network, HelpCircle, LayoutGrid, CheckCircle2, ShieldAlert, Cpu, Server, Globe, Sparkles, ExternalLink, ArrowRight, RotateCcw, XCircle } from 'lucide-react';
+import {
+  Network, HelpCircle, LayoutGrid, CheckCircle2, ShieldAlert, Cpu, Server,
+  Globe, Sparkles, ExternalLink, ArrowRight, XCircle, RotateCcw,
+  Boxes, Shield, GitBranch, Workflow, Layers,
+} from 'lucide-react';
 
 interface Question {
   id: number;
@@ -23,7 +27,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
       ],
       correctAnswer: 1,
       explanation: "Think of cloud computing like buying electricity from a power grid instead of running your own generator. You pull computing resources over the internet and pay only for what you consume.",
-      geminiPrompt: "Explain the absolute basics of Cloud Computing and Microsoft Azure using a simple real-life marketplace or farming analogy for a complete beginner."
+      geminiPrompt: "Explain the absolute basics of Cloud Computing and Microsoft Azure using a simple real-life marketplace analogy for a complete beginner."
     },
     {
       id: 102,
@@ -35,7 +39,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Fault Tolerance"
       ],
       correctAnswer: 2,
-      explanation: "Elasticity works like a rubber band. When your app gets busy (like an online shop during a holiday flash sale), it expands to handle the crowd. When the crowd leaves, it shrinks back down so you stop paying for idle servers.",
+      explanation: "Elasticity works like a rubber band. When your app gets busy, it expands to handle the crowd. When the crowd leaves, it shrinks back down so you stop paying for idle servers.",
       geminiPrompt: "Explain Cloud Elasticity versus Cloud Scalability in simple terms with everyday real-world examples."
     },
     {
@@ -48,7 +52,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Variable Maintenance Outlay"
       ],
       correctAnswer: 1,
-      explanation: "CapEx is buying a building or a massive physical server cluster up front. OpEx is renting an apartment or paying a monthly subscription for Azure resources. Cloud computing shifts your business model from CapEx to OpEx.",
+      explanation: "CapEx is buying a building or massive hardware up front. OpEx is paying a subscription for resources you rent. Cloud computing shifts your business model from CapEx to OpEx.",
       geminiPrompt: "Explain CapEx vs OpEx in cloud computing like I am 5 years old."
     },
     {
@@ -61,7 +65,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Azure Bastion"
       ],
       correctAnswer: 0,
-      explanation: "Microsoft Entra ID (formerly Azure Active Directory) handles identities, logins, and access permissions safely.",
+      explanation: "Microsoft Entra ID (formerly Azure Active Directory) handles identities, logins, multi-factor authentication, and access permissions safely across your tenants.",
       geminiPrompt: "Explain Microsoft Entra ID basics for user access management using an office security guard analogy."
     }
   ],
@@ -76,8 +80,8 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Azure Container Instances"
       ],
       correctAnswer: 1,
-      explanation: "Azure Functions are serverless. Code executes based on triggers (like a file being uploaded). Microsoft handles all servers, and you are billed down to the millisecond only while your code runs.",
-      geminiPrompt: "Explain Azure Functions and Serverless computing using a restaurant or matatu/bus transit analogy."
+      explanation: "Azure Functions are serverless. Code executes based on events or triggers. Microsoft handles all underlying servers, and you are billed down to the millisecond only while your code runs.",
+      geminiPrompt: "Explain Azure Functions and Serverless computing using a restaurant or transit analogy."
     },
     {
       id: 202,
@@ -89,12 +93,12 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Azure Bastion Host"
       ],
       correctAnswer: 1,
-      explanation: "While a VPN encrypts traffic over the public internet, ExpressRoute is a dedicated private pipeline leased from a telecommunications partner directly into Microsoft's network backbone for ultimate speed and privacy.",
+      explanation: "ExpressRoute is a dedicated private pipeline leased from a telecommunications partner directly into Microsoft's network backbone for ultimate speed, security, and privacy.",
       geminiPrompt: "Deep dive explanation of Azure ExpressRoute vs Azure VPN. When should an enterprise choose ExpressRoute?"
     },
     {
       id: 203,
-      question: "You need to host a secure containerized web application without managing underlying virtual machine clusters or configuring complex orchestration platforms. Which service fits best?",
+      question: "You need to host a secure containerized web application without managing virtual machine clusters or configuring complex orchestration. Which service fits best?",
       options: [
         "Azure Virtual Machines",
         "Azure Container Instances (ACI)",
@@ -102,7 +106,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Azure Functions"
       ],
       correctAnswer: 1,
-      explanation: "ACI allows you to deploy isolated containers directly onto Azure without any VM provisioning or management overhead.",
+      explanation: "ACI allows you to deploy isolated containers directly onto Azure instantly without any virtual machine provisioning or management overhead.",
       geminiPrompt: "Explain Azure Container Instances versus fully managed virtual machines for beginners."
     }
   ],
@@ -117,7 +121,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Resource Group structural locks"
       ],
       correctAnswer: 2,
-      explanation: "Azure Policy is used to create and enforce rules over your resources. It prevents developers from spinning up resources outside allowed geographical boundaries, ensuring data residency compliance.",
+      explanation: "Azure Policy is used to create, assign, and manage rules over your resources. It actively prevents developers from spinning up resources outside allowed geographical regions to ensure data sovereignty compliance.",
       geminiPrompt: "Explain the difference between Azure Policy, Azure Role-Based Access Control (RBAC), and Resource Locks with clear architectural use cases."
     },
     {
@@ -130,12 +134,12 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Security"
       ],
       correctAnswer: 3,
-      explanation: "The Security pillar ensures data protection at rest and in transit, user authentication management, and rapid network perimeter defenses against outside intrusions.",
+      explanation: "The Security pillar ensures robust data protection at rest and in transit, unified identity authentication management, and rapid network boundary protection layers against intrusions.",
       geminiPrompt: "Give me a breakdown of the 5 pillars of the Microsoft Azure Well-Architected Framework with simplified corporate examples."
     },
     {
       id: 303,
-      question: "Which tool should an enterprise architecture team use to estimate and compare the total monthly running costs of a new cloud-migrated workload before deploying any resources?",
+      question: "Which tool should an architecture team use to estimate and compare total running costs of a new cloud configuration before deploying any resources?",
       options: [
         "Azure Pricing Calculator",
         "Azure Advisor",
@@ -143,7 +147,7 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
         "Total Cost of Ownership (TCO) Calculator"
       ],
       correctAnswer: 0,
-      explanation: "The Pricing Calculator estimates pre-deployment configurations. The TCO Calculator is used *before* migration to compare cloud vs on-premise hardware expenditures.",
+      explanation: "The Pricing Calculator estimates architecture costs for configurations pre-deployment. The TCO Calculator is utilized before migration to compare cloud consumption directly against on-premise infrastructure data assets.",
       geminiPrompt: "Explain Azure Pricing Calculator vs TCO Calculator vs Cost Management with specific business deployment scenarios."
     }
   ]
@@ -175,37 +179,189 @@ const tierColors: Record<string, { bg: string; text: string; border: string; rin
   rose: { bg: 'bg-rose-600', text: 'text-rose-400', border: 'border-rose-500', ring: 'ring-rose-500', badge: 'bg-rose-500/10 text-rose-400 border-rose-500/30' },
 };
 
-const cloudDiagrams = [
+// ─── Architecture Diagram Patterns ───
+
+interface DiagramNode {
+  title: string;
+  subtitle: string;
+  detail: string;
+}
+
+interface ArchitecturePattern {
+  id: string;
+  title: string;
+  shortTitle: string;
+  description: string;
+  icon: typeof Network;
+  center: DiagramNode;
+  top: DiagramNode;
+  bottom: DiagramNode;
+  left: DiagramNode;
+  right: DiagramNode;
+}
+
+const diagramPatterns: ArchitecturePattern[] = [
   {
-    title: 'IaaS vs PaaS vs SaaS',
-    icon: Server,
-    layers: [
-      { name: 'SaaS', desc: 'Software as a Service', examples: 'Office 365, Gmail', managed: 'Everything', you: 'Just use it' },
-      { name: 'PaaS', desc: 'Platform as a Service', examples: 'Azure App Service, Functions', managed: 'Runtime, OS, Servers', you: 'Your app code' },
-      { name: 'IaaS', desc: 'Infrastructure as a Service', examples: 'Azure VMs, VNet', managed: 'Physical hardware', you: 'OS, runtime, app' },
-    ]
+    id: 'context',
+    title: 'Context & Macro Architecture',
+    shortTitle: 'Context & Macro',
+    description: 'High-level view of how your entire Azure estate connects to users, partners, and the public internet.',
+    icon: Globe,
+    center: { title: 'Azure Cloud Tenant', subtitle: 'Core organizational boundary', detail: 'All subscriptions, resources, and billing live inside this tenant. Managed via Microsoft Entra ID.' },
+    top: { title: 'End Users', subtitle: 'Public internet clients', detail: 'Web & mobile users access your apps through Azure Front Door and CDN endpoints globally.' },
+    bottom: { title: 'On-Premises DC', subtitle: 'Legacy data center', detail: 'Connected via ExpressRoute or VPN Gateway for hybrid cloud workloads and migration scenarios.' },
+    left: { title: 'Partner APIs', subtitle: 'Third-party integrations', detail: 'External SaaS providers and partner systems connect through API Management and Logic Apps.' },
+    right: { title: 'Azure Regions', subtitle: 'Geo-redundancy', detail: 'Paired regions (e.g., South Africa North + West) ensure business continuity during regional outages.' },
   },
   {
-    title: 'Azure Resource Hierarchy',
+    id: 'network',
+    title: 'Network & Topology',
+    shortTitle: 'Network & Topology',
+    description: 'How virtual networks, subnets, firewalls, and traffic routing are structured inside Azure.',
     icon: Network,
-    layers: [
-      { name: 'Management Group', desc: 'Policy & compliance across subscriptions', examples: 'Root MG → Child MG', managed: 'Org-wide policies', you: 'Governance scope' },
-      { name: 'Subscription', desc: 'Billing & access boundary', examples: 'Dev / Prod subscriptions', managed: 'Billing account', you: 'Resource limits' },
-      { name: 'Resource Group', desc: 'Lifecycle container for resources', examples: 'rg-webapp-prod', managed: 'Logical grouping', you: 'Resource organization' },
-      { name: 'Resource', desc: 'Individual Azure service instance', examples: 'VM, Storage Account', managed: 'Cloud provider', you: 'Configuration' },
-    ]
+    center: { title: 'Azure VNet', subtitle: 'Core virtual network', detail: 'Primary network space (10.0.0.0/16) hosting all subnets, NSGs, and route tables for your workloads.' },
+    top: { title: 'Application Gateway', subtitle: 'WAF & L7 load balancing', detail: 'Web Application Firewall inspects incoming HTTP traffic and distributes load across backend pools.' },
+    bottom: { title: 'Azure Firewall', subtitle: 'Egress filtering & NAT', detail: 'Controls outbound traffic with DNAT/SNAT rules. Threat intelligence mode blocks known malicious IPs.' },
+    left: { title: 'Bastion Host', subtitle: 'Secure RDP / SSH access', detail: 'Provides seamless TLS-based remote access to VMs without exposing public IP addresses.' },
+    right: { title: 'VNet Peering', subtitle: 'Cross-VNet connectivity', detail: 'Low-latency private links between VNets in different subscriptions or regions without gateways.' },
   },
   {
-    title: 'Shared Responsibility Model',
-    icon: ShieldAlert,
-    layers: [
-      { name: 'On-Premises', desc: 'You manage everything', examples: 'Hardware → App', managed: 'Nothing', you: 'Everything' },
-      { name: 'IaaS', desc: 'Provider manages hardware', examples: 'Azure VM', managed: 'Physical security, hardware', you: 'OS + above' },
-      { name: 'PaaS', desc: 'Provider manages OS + runtime', examples: 'Azure SQL', managed: 'OS, runtime, hardware', you: 'Data + app' },
-      { name: 'SaaS', desc: 'Provider manages everything', examples: 'Office 365', managed: 'App + infra', you: 'Your data & access' },
-    ]
-  }
+    id: 'deployment',
+    title: 'Deployment & Infrastructure',
+    shortTitle: 'Deployment & Infra',
+    description: 'Compute models, container orchestration, and CI/CD pipelines used to ship workloads to Azure.',
+    icon: Boxes,
+    center: { title: 'Azure Kubernetes Service', subtitle: 'Container orchestration', detail: 'Managed K8s cluster auto-scales nodes and pods. Integrates with Azure Container Registry for images.' },
+    top: { title: 'Azure DevOps', subtitle: 'CI/CD pipelines', detail: 'Build, test, and deploy via YAML pipelines. Artifacts feed directly into AKS and App Service slots.' },
+    bottom: { title: 'Azure Functions', subtitle: 'Serverless compute', detail: 'Event-driven micro-services that scale to zero. Triggered by Event Grid, Service Bus, or HTTP calls.' },
+    left: { title: 'App Service', subtitle: 'Managed PaaS hosting', detail: 'Auto-scaling web apps with deployment slots for zero-downtime swaps between staging and production.' },
+    right: { title: 'Container Registry', subtitle: 'Private image store', detail: 'Geo-replicated Docker registry with webhook triggers and integrated vulnerability scanning.' },
+  },
+  {
+    id: 'dataflow',
+    title: 'Data-Flow & Security',
+    shortTitle: 'Data-Flow & Security',
+    description: 'How data moves through storage layers, encryption boundaries, and identity checkpoints.',
+    icon: Shield,
+    center: { title: 'Azure Key Vault', subtitle: 'Secrets & key management', detail: 'Centralized store for encryption keys, certificates, and connection strings. Access controlled via RBAC.' },
+    top: { title: 'Microsoft Entra ID', subtitle: 'Identity provider', detail: 'Issues JWT tokens for authenticated users and managed identities. Conditional Access policies gate logins.' },
+    bottom: { title: 'Azure Storage', subtitle: 'Encrypted blob & file', detail: 'Data encrypted at rest with customer-managed keys from Key Vault. Soft-delete and versioning enabled.' },
+    left: { title: 'Azure SQL DB', subtitle: 'Relational data store', detail: 'Always Encrypted + TDE protect sensitive columns. Transparent failover via auto-failover groups.' },
+    right: { title: 'Cosmos DB', subtitle: 'Globally distributed NoSQL', detail: 'Multi-master writes with five consistency levels. Changefeed triggers Azure Functions on data mutations.' },
+  },
+  {
+    id: 'sequence',
+    title: 'Sequence & Interaction',
+    shortTitle: 'Sequence & Interaction',
+    description: 'Step-by-step request lifecycle showing how each Azure service interacts in order.',
+    icon: Workflow,
+    center: { title: 'API Management', subtitle: 'Request gateway', detail: 'Validates API keys, enforces rate limits, and routes authenticated calls to backend services.' },
+    top: { title: 'Event Grid', subtitle: 'Event distribution', detail: 'Routes events from Azure resources to subscribers (Functions, Logic Apps) via a publish-subscribe model.' },
+    bottom: { title: 'Service Bus', subtitle: 'Reliable messaging', detail: 'Transactional queues and topics guarantee message ordering and at-least-once delivery for decoupled services.' },
+    left: { title: 'Logic Apps', subtitle: 'Workflow orchestration', detail: 'Visual designer chains connectors and API calls into automated business processes with retry policies.' },
+    right: { title: 'Azure Monitor', subtitle: 'Telemetry & alerts', detail: 'Collects metrics and logs across all services. Triggers alerts and auto-scaling rules based on thresholds.' },
+  },
 ];
+
+// ─── Hub-and-Spoke Diagram Component ───
+
+function HubSpokeDiagram({ pattern }: { pattern: ArchitecturePattern }) {
+  const positions = [
+    { key: 'top', node: pattern.top, className: 'md:top-0 md:left-1/2 md:-translate-x-1/2 md:translate-y-0', label: 'North' },
+    { key: 'right', node: pattern.right, className: 'md:top-1/2 md:right-0 md:-translate-y-1/2 md:translate-x-0', label: 'East' },
+    { key: 'bottom', node: pattern.bottom, className: 'md:bottom-0 md:left-1/2 md:-translate-x-1/2 md:translate-y-0', label: 'South' },
+    { key: 'left', node: pattern.left, className: 'md:top-1/2 md:left-0 md:-translate-y-1/2 md:translate-x-0', label: 'West' },
+  ];
+
+  return (
+    <div className="relative w-full">
+      {/* Desktop radial layout */}
+      <div className="hidden md:block relative h-[540px] bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden">
+        {/* SVG connecting lines */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 540" preserveAspectRatio="none">
+          <line x1="400" y1="270" x2="400" y2="100" stroke="url(#gradTop)" strokeWidth="2" strokeDasharray="6 4" />
+          <line x1="400" y1="270" x2="680" y2="270" stroke="url(#gradRight)" strokeWidth="2" strokeDasharray="6 4" />
+          <line x1="400" y1="270" x2="400" y2="440" stroke="url(#gradBottom)" strokeWidth="2" strokeDasharray="6 4" />
+          <line x1="400" y1="270" x2="120" y2="270" stroke="url(#gradLeft)" strokeWidth="2" strokeDasharray="6 4" />
+          <defs>
+            <linearGradient id="gradTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="gradRight" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#a855f7" stopOpacity="0.6" />
+            </linearGradient>
+            <linearGradient id="gradBottom" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="gradLeft" x1="1" y1="0" x2="0" y2="0">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#a855f7" stopOpacity="0.6" />
+            </linearGradient>
+          </defs>
+          {/* Arrowheads */}
+          <circle cx="400" cy="100" r="4" fill="#a855f7" />
+          <circle cx="680" cy="270" r="4" fill="#a855f7" />
+          <circle cx="400" cy="440" r="4" fill="#a855f7" />
+          <circle cx="120" cy="270" r="4" fill="#a855f7" />
+        </svg>
+
+        {/* Center hub */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 z-10">
+          <div className="rounded-xl border-2 border-purple-500 bg-gradient-to-br from-purple-600/20 to-indigo-600/10 p-5 shadow-lg shadow-purple-500/10">
+            <div className="flex items-center gap-2 mb-1">
+              <pattern.icon className="h-5 w-5 text-purple-400" />
+              <p className="text-sm font-bold text-white">{pattern.center.title}</p>
+            </div>
+            <p className="text-xs text-purple-300 mb-2">{pattern.center.subtitle}</p>
+            <p className="text-xs text-slate-400 leading-relaxed">{pattern.center.detail}</p>
+          </div>
+        </div>
+
+        {/* Peripheral nodes */}
+        {positions.map(({ key, node, className, label }) => (
+          <div key={key} className={`absolute w-56 ${className}`}>
+            <div className="rounded-xl border border-slate-700 bg-slate-800/80 p-4 hover:border-purple-500/50 transition-all">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{label}</span>
+              </div>
+              <p className="text-sm font-bold text-slate-100">{node.title}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{node.subtitle}</p>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">{node.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile stacked layout */}
+      <div className="md:hidden space-y-4">
+        <div className="rounded-xl border-2 border-purple-500 bg-gradient-to-br from-purple-600/20 to-indigo-600/10 p-5">
+          <div className="flex items-center gap-2 mb-1">
+            <pattern.icon className="h-5 w-5 text-purple-400" />
+            <p className="text-sm font-bold text-white">{pattern.center.title}</p>
+          </div>
+          <p className="text-xs text-purple-300 mb-2">{pattern.center.subtitle}</p>
+          <p className="text-xs text-slate-400 leading-relaxed">{pattern.center.detail}</p>
+        </div>
+        {positions.map(({ key, node, label }) => (
+          <div key={key}>
+            <div className="flex items-center gap-2 mb-1.5">
+              <ArrowRight className="h-3 w-3 text-purple-500 rotate-90" />
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{label}</span>
+            </div>
+            <div className="rounded-xl border border-slate-700 bg-slate-800/80 p-4 ml-5">
+              <p className="text-sm font-bold text-slate-100">{node.title}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{node.subtitle}</p>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">{node.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'quiz' | 'diagrams'>('quiz');
@@ -216,6 +372,7 @@ export default function App() {
   const [connections, setConnections] = useState<Record<string, string>>({});
   const [matchFeedback, setMatchFeedback] = useState<string>('');
   const [matchVerified, setMatchVerified] = useState<boolean>(false);
+  const [selectedPattern, setSelectedPattern] = useState<string>('context');
 
   const handleSelectAnswer = (qId: number, optionIdx: number) => {
     setUserAnswers(prev => ({ ...prev, [qId]: optionIdx }));
@@ -239,6 +396,17 @@ export default function App() {
     setSelectedLeft(null);
     setMatchVerified(false);
     setMatchFeedback('');
+  };
+
+  const isMatchCorrect = (itemId: string): boolean => {
+    return connections[itemId] === interactiveMatchItems.find(i => i.id === itemId)?.matchId;
+  };
+
+  const getConnectedItemIdForTarget = (targetMatchId: string): string | null => {
+    for (const key of Object.keys(connections)) {
+      if (connections[key] === targetMatchId) return key;
+    }
+    return null;
   };
 
   const checkMatchAnswers = () => {
@@ -266,20 +434,11 @@ export default function App() {
   const tierQuestions = quizTiers[selectedTier];
   const tierInfo = tierConfig[selectedTier];
   const tc = tierColors[tierInfo.color];
-
-  const isMatchCorrect = (itemId: string): boolean => {
-    return connections[itemId] === interactiveMatchItems.find(i => i.id === itemId)?.matchId;
-  };
-
-  const getConnectedMatchIdForTarget = (targetMatchId: string): string | null => {
-    for (const key of Object.keys(connections)) {
-      if (connections[key] === targetMatchId) return key;
-    }
-    return null;
-  };
+  const activePattern = diagramPatterns.find(p => p.id === selectedPattern) ?? diagramPatterns[0];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col">
+      {/* Header */}
       <header className="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-purple-400 flex items-center gap-2">
@@ -314,10 +473,11 @@ export default function App() {
         </nav>
       </header>
 
+      {/* Main Content */}
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
         {activeTab === 'quiz' && (
           <div className="space-y-8">
-            {/* Intro Section */}
+            {/* Intro */}
             <div className="text-center md:text-left max-w-2xl">
               <h2 className="text-2xl font-bold text-white mb-2">Smart Architecture Quiz Builder</h2>
               <p className="text-slate-400 text-sm">
@@ -440,7 +600,7 @@ export default function App() {
               })}
             </div>
 
-            {/* Interactive Matching Game */}
+            {/* Matching Game */}
             <div className="bg-slate-900 rounded-xl border border-slate-800 p-6">
               <div className="flex items-center gap-2 mb-2">
                 <LayoutGrid className="h-5 w-5 text-purple-400" />
@@ -451,7 +611,7 @@ export default function App() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Left column: Services */}
+                {/* Left column */}
                 <div className="space-y-3">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Azure Service</p>
                   {interactiveMatchItems.map(item => {
@@ -464,7 +624,7 @@ export default function App() {
                     if (isSelected) {
                       borderCls = `${tc.border} ${tc.bg}/20 ring-2 ${tc.ring} text-white`;
                     } else if (verifiedWrong) {
-                      borderCls = 'border-rose-500 bg-rose-500/10 text-rose-400';
+                      borderCls = 'border-rose-600 bg-rose-950/20 text-rose-300';
                     } else if (verifiedRight) {
                       borderCls = 'border-emerald-500 bg-emerald-500/10 text-emerald-400';
                     } else if (connected) {
@@ -496,26 +656,22 @@ export default function App() {
                   })}
                 </div>
 
-                {/* Right column: Descriptions */}
+                {/* Right column */}
                 <div className="space-y-3">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</p>
                   {matchTargets.map(target => {
-                    const connectedItemId = getConnectedMatchIdForTarget(target.matchId);
+                    const connectedItemId = getConnectedItemIdForTarget(target.matchId);
                     const isConnected = connectedItemId !== null;
                     const verifiedWrong = matchVerified && isConnected && !isMatchCorrect(connectedItemId!);
                     const verifiedRight = matchVerified && isConnected && isMatchCorrect(connectedItemId!);
 
                     let borderCls = 'border-slate-800 bg-slate-800/30 text-slate-500 cursor-default';
-                    if (isConnected) {
-                      if (verifiedWrong) {
-                        borderCls = 'border-rose-500 bg-rose-500/10 text-rose-400 cursor-default';
-                      } else if (verifiedRight) {
-                        borderCls = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default';
-                      } else if (selectedLeft) {
-                        borderCls = 'border-purple-500 bg-purple-500/10 text-slate-100 hover:bg-purple-500/20 cursor-pointer';
-                      } else {
-                        borderCls = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default';
-                      }
+                    if (verifiedWrong) {
+                      borderCls = 'border-rose-600 bg-rose-950/20 text-rose-300 cursor-default';
+                    } else if (verifiedRight) {
+                      borderCls = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default';
+                    } else if (isConnected) {
+                      borderCls = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default';
                     } else if (selectedLeft) {
                       borderCls = 'border-purple-500 bg-purple-500/10 text-slate-100 hover:bg-purple-500/20 cursor-pointer';
                     }
@@ -524,7 +680,7 @@ export default function App() {
                       <button
                         key={target.matchId}
                         onClick={() => handlePairBoxes(target.matchId)}
-                        disabled={!selectedLeft || (isConnected && !selectedLeft)}
+                        disabled={!selectedLeft || isConnected}
                         className={`w-full text-left px-4 py-3 rounded-lg border text-sm transition-all flex items-center gap-3 ${borderCls}`}
                       >
                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
@@ -539,7 +695,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Matcher Controls & Feedback */}
+              {/* Controls & Feedback */}
               <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
                 <div className="flex gap-3">
                   <button
@@ -570,60 +726,68 @@ export default function App() {
 
         {activeTab === 'diagrams' && (
           <div className="space-y-6">
-            <div className="text-center mb-8">
+            <div className="text-center mb-2">
               <h2 className="text-2xl font-bold text-slate-100 mb-2 flex items-center justify-center gap-2">
                 <Globe className="h-6 w-6 text-purple-400" />
                 Structural Cloud Diagrams
               </h2>
               <p className="text-sm text-slate-400">
-                Visual breakdowns of core Azure architectural concepts.
+                Interactive Azure architectural patterns — select a pattern from the left menu.
               </p>
             </div>
 
-            {cloudDiagrams.map((diagram) => {
-              const DiagramIcon = diagram.icon;
-              return (
-                <div key={diagram.title} className="bg-slate-900 rounded-xl border border-slate-800 p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center">
-                      <DiagramIcon className="h-5 w-5 text-purple-400" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-100">{diagram.title}</h3>
-                  </div>
-
-                  <div className="space-y-2">
-                    {diagram.layers.map((layer, lIdx) => (
-                      <div
-                        key={layer.name}
-                        className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 items-center rounded-lg border border-slate-800 bg-slate-800/30 p-4 hover:border-slate-700 transition-all"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold">
-                            {lIdx + 1}
-                          </span>
-                          <div>
-                            <p className="text-sm font-bold text-slate-100">{layer.name}</p>
-                            <p className="text-xs text-slate-500">{layer.desc}</p>
-                          </div>
-                        </div>
-                        <div className="md:col-span-1">
-                          <p className="text-xs text-slate-500 mb-0.5">Examples</p>
-                          <p className="text-xs text-slate-300">{layer.examples}</p>
-                        </div>
-                        <div className="md:col-span-1">
-                          <p className="text-xs text-slate-500 mb-0.5">Provider Manages</p>
-                          <p className="text-xs text-emerald-400">{layer.managed}</p>
-                        </div>
-                        <div className="md:col-span-1">
-                          <p className="text-xs text-slate-500 mb-0.5">You Manage</p>
-                          <p className="text-xs text-amber-400">{layer.you}</p>
-                        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+              {/* Side Navigation */}
+              <aside className="space-y-2">
+                {diagramPatterns.map(pattern => {
+                  const PatternIcon = pattern.icon;
+                  const isActive = selectedPattern === pattern.id;
+                  return (
+                    <button
+                      key={pattern.id}
+                      onClick={() => setSelectedPattern(pattern.id)}
+                      className={`w-full text-left px-4 py-3 rounded-lg border transition-all flex items-center gap-3 ${
+                        isActive
+                          ? 'border-purple-500 bg-purple-600/10 text-white'
+                          : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                      }`}
+                    >
+                      <PatternIcon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-purple-400' : 'text-slate-500'}`} />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">{pattern.shortTitle}</p>
+                        <p className={`text-xs truncate ${isActive ? 'text-purple-300/70' : 'text-slate-600'}`}>
+                          {pattern.id === 'context' && 'Tenant-level overview'}
+                          {pattern.id === 'network' && 'VNet & firewall layout'}
+                          {pattern.id === 'deployment' && 'Compute & CI/CD'}
+                          {pattern.id === 'dataflow' && 'Encryption & identity'}
+                          {pattern.id === 'sequence' && 'Request lifecycle'}
+                        </p>
                       </div>
-                    ))}
+                    </button>
+                  );
+                })}
+              </aside>
+
+              {/* Diagram Canvas */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  {(() => {
+                    const ActiveIcon = activePattern.icon;
+                    return (
+                      <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center">
+                        <ActiveIcon className="h-5 w-5 text-purple-400" />
+                      </div>
+                    );
+                  })()}
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-100">{activePattern.title}</h3>
+                    <p className="text-xs text-slate-400">{activePattern.description}</p>
                   </div>
                 </div>
-              );
-            })}
+
+                <HubSpokeDiagram pattern={activePattern} />
+              </div>
+            </div>
           </div>
         )}
       </main>
