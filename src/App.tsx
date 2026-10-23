@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Network, HelpCircle, LayoutGrid, CheckCircle2, ShieldAlert, Cpu, Server, Globe, Sparkles, ExternalLink, ArrowRight, RotateCcw } from 'lucide-react';
+import { Network, HelpCircle, LayoutGrid, CheckCircle2, ShieldAlert, Cpu, Server, Globe, Sparkles, ExternalLink, ArrowRight, RotateCcw, XCircle } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -50,6 +50,19 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
       correctAnswer: 1,
       explanation: "CapEx is buying a building or a massive physical server cluster up front. OpEx is renting an apartment or paying a monthly subscription for Azure resources. Cloud computing shifts your business model from CapEx to OpEx.",
       geminiPrompt: "Explain CapEx vs OpEx in cloud computing like I am 5 years old."
+    },
+    {
+      id: 104,
+      question: "Which Azure service provides a managed, cloud-based directory service for user authentication and identity management?",
+      options: [
+        "Microsoft Entra ID",
+        "Azure Key Vault",
+        "Azure Information Protection",
+        "Azure Bastion"
+      ],
+      correctAnswer: 0,
+      explanation: "Microsoft Entra ID (formerly Azure Active Directory) handles identities, logins, and access permissions safely.",
+      geminiPrompt: "Explain Microsoft Entra ID basics for user access management using an office security guard analogy."
     }
   ],
   advanced: [
@@ -78,6 +91,19 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
       correctAnswer: 1,
       explanation: "While a VPN encrypts traffic over the public internet, ExpressRoute is a dedicated private pipeline leased from a telecommunications partner directly into Microsoft's network backbone for ultimate speed and privacy.",
       geminiPrompt: "Deep dive explanation of Azure ExpressRoute vs Azure VPN. When should an enterprise choose ExpressRoute?"
+    },
+    {
+      id: 203,
+      question: "You need to host a secure containerized web application without managing underlying virtual machine clusters or configuring complex orchestration platforms. Which service fits best?",
+      options: [
+        "Azure Virtual Machines",
+        "Azure Container Instances (ACI)",
+        "Azure Dedicated Host",
+        "Azure Functions"
+      ],
+      correctAnswer: 1,
+      explanation: "ACI allows you to deploy isolated containers directly onto Azure without any VM provisioning or management overhead.",
+      geminiPrompt: "Explain Azure Container Instances versus fully managed virtual machines for beginners."
     }
   ],
   expert: [
@@ -106,6 +132,19 @@ const quizTiers: Record<'basic' | 'advanced' | 'expert', Question[]> = {
       correctAnswer: 3,
       explanation: "The Security pillar ensures data protection at rest and in transit, user authentication management, and rapid network perimeter defenses against outside intrusions.",
       geminiPrompt: "Give me a breakdown of the 5 pillars of the Microsoft Azure Well-Architected Framework with simplified corporate examples."
+    },
+    {
+      id: 303,
+      question: "Which tool should an enterprise architecture team use to estimate and compare the total monthly running costs of a new cloud-migrated workload before deploying any resources?",
+      options: [
+        "Azure Pricing Calculator",
+        "Azure Advisor",
+        "Azure Cost Management + Billing",
+        "Total Cost of Ownership (TCO) Calculator"
+      ],
+      correctAnswer: 0,
+      explanation: "The Pricing Calculator estimates pre-deployment configurations. The TCO Calculator is used *before* migration to compare cloud vs on-premise hardware expenditures.",
+      geminiPrompt: "Explain Azure Pricing Calculator vs TCO Calculator vs Cost Management with specific business deployment scenarios."
     }
   ]
 };
@@ -176,39 +215,68 @@ export default function App() {
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
   const [connections, setConnections] = useState<Record<string, string>>({});
   const [matchFeedback, setMatchFeedback] = useState<string>('');
+  const [matchVerified, setMatchVerified] = useState<boolean>(false);
 
   const handleSelectAnswer = (qId: number, optionIdx: number) => {
     setUserAnswers(prev => ({ ...prev, [qId]: optionIdx }));
   };
 
   const handleOpenGemini = (promptText: string) => {
-    const targetUrl = `https://gemini.google.com/app?q=${encodeURIComponent(promptText)}`;
+    const targetUrl = `https://google.com/search?q=${encodeURIComponent(promptText)}`;
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handlePairBoxes = (targetMatchId: string) => {
     if (!selectedLeft) return;
-    setConnections(prev => ({ ...prev, [selectedLeft]: targetMatchId }));
+    setConnections(prev => {
+      const updated = { ...prev };
+      for (const key of Object.keys(updated)) {
+        if (updated[key] === targetMatchId) delete updated[key];
+      }
+      updated[selectedLeft] = targetMatchId;
+      return updated;
+    });
     setSelectedLeft(null);
+    setMatchVerified(false);
+    setMatchFeedback('');
   };
 
   const checkMatchAnswers = () => {
     let correctCount = 0;
+    const total = interactiveMatchItems.length;
     interactiveMatchItems.forEach(item => {
       if (connections[item.id] === item.matchId) correctCount++;
     });
-    setMatchFeedback(`Puzzle Check: You successfully connected ${correctCount} out of ${interactiveMatchItems.length} boxes correctly!`);
+    setMatchVerified(true);
+    if (correctCount === total) {
+      setMatchFeedback(`All ${total} pairs matched correctly. Well done!`);
+    } else {
+      const wrongCount = total - correctCount;
+      setMatchFeedback(`You got ${correctCount} out of ${total} correct. ${wrongCount} ${wrongCount === 1 ? 'pair is' : 'pairs are'} incorrect — shown in red below.`);
+    }
   };
 
   const resetMatcher = () => {
     setConnections({});
     setSelectedLeft(null);
     setMatchFeedback('');
+    setMatchVerified(false);
   };
 
   const tierQuestions = quizTiers[selectedTier];
   const tierInfo = tierConfig[selectedTier];
   const tc = tierColors[tierInfo.color];
+
+  const isMatchCorrect = (itemId: string): boolean => {
+    return connections[itemId] === interactiveMatchItems.find(i => i.id === itemId)?.matchId;
+  };
+
+  const getConnectedMatchIdForTarget = (targetMatchId: string): string | null => {
+    for (const key of Object.keys(connections)) {
+      if (connections[key] === targetMatchId) return key;
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col">
@@ -376,10 +444,10 @@ export default function App() {
             <div className="bg-slate-900 rounded-xl border border-slate-800 p-6">
               <div className="flex items-center gap-2 mb-2">
                 <LayoutGrid className="h-5 w-5 text-purple-400" />
-                <h2 className="text-lg font-bold text-slate-100">Service Matcher Puzzle</h2>
+                <h2 className="text-lg font-bold text-slate-100">Bonus Spice: Azure Infrastructure Box Matcher</h2>
               </div>
               <p className="text-sm text-slate-400 mb-6">
-                Click a service on the left, then click its matching description on the right to connect them.
+                Click a service on the left, then click its matching description on the right to connect them. Hit <span className="font-semibold text-purple-400">Verify Connected Pairs</span> to check your answers.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -389,28 +457,40 @@ export default function App() {
                   {interactiveMatchItems.map(item => {
                     const connected = connections[item.id];
                     const isSelected = selectedLeft === item.id;
+                    const verifiedWrong = matchVerified && connected && !isMatchCorrect(item.id);
+                    const verifiedRight = matchVerified && connected && isMatchCorrect(item.id);
+
+                    let borderCls = 'border-slate-700 bg-slate-800/50 text-slate-200 hover:border-slate-600';
+                    if (isSelected) {
+                      borderCls = `${tc.border} ${tc.bg}/20 ring-2 ${tc.ring} text-white`;
+                    } else if (verifiedWrong) {
+                      borderCls = 'border-rose-500 bg-rose-500/10 text-rose-400';
+                    } else if (verifiedRight) {
+                      borderCls = 'border-emerald-500 bg-emerald-500/10 text-emerald-400';
+                    } else if (connected) {
+                      borderCls = 'border-slate-700 bg-slate-800/50 text-slate-400';
+                    }
+
                     return (
                       <button
                         key={item.id}
                         onClick={() => setSelectedLeft(isSelected ? null : item.id)}
-                        className={`w-full text-left px-4 py-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-between ${
-                          isSelected
-                            ? `${tc.border} ${tc.bg}/20 ring-2 ${tc.ring} text-white`
-                            : connected
-                            ? 'border-slate-700 bg-slate-800/50 text-slate-400'
-                            : 'border-slate-700 bg-slate-800/50 text-slate-200 hover:border-slate-600'
-                        }`}
+                        className={`w-full text-left px-4 py-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-between ${borderCls}`}
                       >
                         <span className="flex items-center gap-2">
                           <Server className="h-4 w-4 text-slate-500" />
                           {item.name}
                         </span>
-                        {connected && (
-                          <span className="text-xs text-slate-500 flex items-center gap-1">
-                            <ArrowRight className="h-3 w-3" />
-                            {connected}
-                          </span>
-                        )}
+                        <span className="flex items-center gap-2">
+                          {verifiedRight && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+                          {verifiedWrong && <XCircle className="h-4 w-4 text-rose-400" />}
+                          {connected && (
+                            <span className="text-xs text-slate-500 flex items-center gap-1">
+                              <ArrowRight className="h-3 w-3" />
+                              {connected}
+                            </span>
+                          )}
+                        </span>
                       </button>
                     );
                   })}
@@ -420,25 +500,39 @@ export default function App() {
                 <div className="space-y-3">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</p>
                   {matchTargets.map(target => {
-                    const isConnected = Object.values(connections).includes(target.matchId);
+                    const connectedItemId = getConnectedMatchIdForTarget(target.matchId);
+                    const isConnected = connectedItemId !== null;
+                    const verifiedWrong = matchVerified && isConnected && !isMatchCorrect(connectedItemId!);
+                    const verifiedRight = matchVerified && isConnected && isMatchCorrect(connectedItemId!);
+
+                    let borderCls = 'border-slate-800 bg-slate-800/30 text-slate-500 cursor-default';
+                    if (isConnected) {
+                      if (verifiedWrong) {
+                        borderCls = 'border-rose-500 bg-rose-500/10 text-rose-400 cursor-default';
+                      } else if (verifiedRight) {
+                        borderCls = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default';
+                      } else if (selectedLeft) {
+                        borderCls = 'border-purple-500 bg-purple-500/10 text-slate-100 hover:bg-purple-500/20 cursor-pointer';
+                      } else {
+                        borderCls = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default';
+                      }
+                    } else if (selectedLeft) {
+                      borderCls = 'border-purple-500 bg-purple-500/10 text-slate-100 hover:bg-purple-500/20 cursor-pointer';
+                    }
+
                     return (
                       <button
                         key={target.matchId}
                         onClick={() => handlePairBoxes(target.matchId)}
-                        disabled={!selectedLeft || isConnected}
-                        className={`w-full text-left px-4 py-3 rounded-lg border text-sm transition-all flex items-center gap-3 ${
-                          isConnected
-                            ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300 cursor-default'
-                            : selectedLeft
-                            ? 'border-purple-500 bg-purple-500/10 text-slate-100 hover:bg-purple-500/20 cursor-pointer'
-                            : 'border-slate-800 bg-slate-800/30 text-slate-500 cursor-default'
-                        }`}
+                        disabled={!selectedLeft || (isConnected && !selectedLeft)}
+                        className={`w-full text-left px-4 py-3 rounded-lg border text-sm transition-all flex items-center gap-3 ${borderCls}`}
                       >
                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
                           {target.matchId}
                         </span>
                         <span>{target.text}</span>
-                        {isConnected && <CheckCircle2 className="h-4 w-4 text-emerald-400 ml-auto flex-shrink-0" />}
+                        {verifiedRight && <CheckCircle2 className="h-4 w-4 text-emerald-400 ml-auto flex-shrink-0" />}
+                        {verifiedWrong && <XCircle className="h-4 w-4 text-rose-400 ml-auto flex-shrink-0" />}
                       </button>
                     );
                   })}
@@ -454,7 +548,7 @@ export default function App() {
                     className="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:bg-slate-800 disabled:text-slate-600 text-white text-sm font-semibold transition-all flex items-center gap-2"
                   >
                     <CheckCircle2 className="h-4 w-4" />
-                    Check Answers
+                    Verify Connected Pairs
                   </button>
                   <button
                     onClick={resetMatcher}
@@ -465,7 +559,9 @@ export default function App() {
                   </button>
                 </div>
                 {matchFeedback && (
-                  <p className="text-sm font-medium text-purple-300">{matchFeedback}</p>
+                  <p className={`text-sm font-medium ${matchVerified && matchFeedback.includes('incorrect') ? 'text-rose-400' : 'text-emerald-400'}`}>
+                    {matchFeedback}
+                  </p>
                 )}
               </div>
             </div>
